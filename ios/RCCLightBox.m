@@ -249,7 +249,7 @@ const NSInteger kLightBoxTag = 0x101010;
 {
     UIViewController *viewController = RCTPresentedViewController();
     RCCLightBoxView *lightBox = [viewController.view viewWithTag:kLightBoxTag];
-    NSDictionary *style = params[@"style"];
+    NSDictionary *style = lightBox.params[@"style"];
     if (lightBox != nil)
     {
         if (style[@"animated"] != nil && [RCTConvert BOOL:style[@"animated"]]) {
