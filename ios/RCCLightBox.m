@@ -68,6 +68,11 @@ const NSInteger kLightBoxTag = 0x101010;
         self.reactView.backgroundColor = [UIColor clearColor];
         self.reactView.sizeFlexibility = RCTRootViewSizeFlexibilityWidthAndHeight;
         self.reactView.center = self.center;
+        if (style[@"tapBackgroundToDismiss"] == nil || style[@"tapBackgroundToDismiss"] != nil && ![RCTConvert BOOL:style[@"tapBackgroundToDismiss"]])
+        {
+            [self.reactView setPassThroughTouches:YES];
+        }
+
         [self addSubview:self.reactView];
         
         [self.reactView.contentView.layer addObserver:self forKeyPath:@"frame" options:0 context:nil];
@@ -78,6 +83,14 @@ const NSInteger kLightBoxTag = 0x101010;
     return self;
 }
 
+-(id)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    id hitView = [super hitTest:point withEvent:event];
+    if (hitView == self) {
+        return nil;
+    } else {
+        return hitView;
+    }
+}
 
 -(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
@@ -217,6 +230,7 @@ const NSInteger kLightBoxTag = 0x101010;
 
 +(void)showWithParams:(NSDictionary*)params
 {
+    NSDictionary *style = params[@"style"];
     UIViewController *viewController = RCTPresentedViewController();
     if ([viewController.view viewWithTag:kLightBoxTag] != nil)
     {
@@ -226,16 +240,23 @@ const NSInteger kLightBoxTag = 0x101010;
     RCCLightBoxView *lightBox = [[RCCLightBoxView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height) params:params];
     lightBox.tag = kLightBoxTag;
     [viewController.view addSubview:lightBox];
-    [lightBox showAnimated];
+    if (style[@"animated"] != nil && [RCTConvert BOOL:style[@"animated"]]) {
+        [lightBox showAnimated];
+    }
 }
 
 +(void)dismiss
 {
     UIViewController *viewController = RCTPresentedViewController();
     RCCLightBoxView *lightBox = [viewController.view viewWithTag:kLightBoxTag];
+    NSDictionary *style = params[@"style"];
     if (lightBox != nil)
     {
-        [lightBox dismissAnimated];
+        if (style[@"animated"] != nil && [RCTConvert BOOL:style[@"animated"]]) {
+            [lightBox dismissAnimated];
+        } else {
+            [lightBox removeFromSuperview];
+        }
     }
 }
 
