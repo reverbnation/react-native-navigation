@@ -97,6 +97,7 @@ async function startTabBasedApp(params) {
           style={params.tabsStyle}
           appStyle={params.appStyle}
           initialTabIndex={params.initialTabIndex}>
+          overlay={params.overlay}
           {
             params.tabs.map(function (tab, index) {
               return (

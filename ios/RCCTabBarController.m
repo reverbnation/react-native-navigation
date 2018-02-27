@@ -14,6 +14,12 @@
 
 @end
 
+@interface RCCTabBarController()
+
+@property (strong, nonatomic) RCTRootView *overlayView;
+
+@end
+
 @implementation RCCTabBarController
 
 
@@ -133,6 +139,18 @@
     }
   }
   
+  NSString *overlayScreen = [props valueForKeyPath:@"overlay.screen"];
+  if (overlayScreen) {
+    // Pass navigation props
+    NSMutableDictionary *mutablePassPropsOverlay = [passProps mutableCopy];
+    NSDictionary *overlayProps = [props valueForKeyPath:@"overlay.passProps"];
+    if (overlayProps) {
+      [mutablePassPropsOverlay addEntriesFromDictionary:overlayProps];
+    }
+    NSDictionary *passPropsOverlay = [NSDictionary dictionaryWithDictionary:mutablePassPropsOverlay];
+    self.overlayView = [[RCTRootView alloc] initWithBridge:bridge moduleName:overlayScreen initialProperties:passPropsOverlay];
+  }
+  
   NSMutableArray *viewControllers = [NSMutableArray array];
   
   // go over all the tab bar items
@@ -229,6 +247,33 @@
   [self setRotation:props];
   
   return self;
+}
+
+- (void)setOverlayView:(RCTRootView *)overlayView {
+  RCTRootView *previousOverlayView = _overlayView;
+
+  if (previousOverlayView) {
+    [previousOverlayView removeFromSuperview];
+  }
+  
+  _overlayView = overlayView;
+  
+  if (!_overlayView) {
+    return;
+  }
+  
+  _overlayView.passThroughTouches = YES;
+  _overlayView.backgroundColor = [UIColor clearColor];
+  _overlayView.frame = self.view.bounds;
+  [self.view addSubview:_overlayView];
+}
+
+- (void)viewDidLayoutSubviews {
+  [super viewDidLayoutSubviews];
+ 
+  if (_overlayView) {
+    [self.view bringSubviewToFront:_overlayView];
+  }
 }
 
 - (void)performAction:(NSString*)performAction actionParams:(NSDictionary*)actionParams bridge:(RCTBridge *)bridge completion:(void (^)(void))completion
