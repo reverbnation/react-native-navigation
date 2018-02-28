@@ -322,6 +322,12 @@ var Controllers = {
   ScreenUtils: {
     getCurrentlyVisibleScreenId: async function() {
       return await RCCManager.getCurrentlyVisibleScreenId();
+    },
+    showOverlay: function(params) {
+      RCCManager.showOverlay(params);
+    },
+    removeOverlay: function() {
+      RCCManager.removeOverlay();
     }
   },
 
