@@ -867,7 +867,7 @@ export default {
   isRootLaunched,
   getCurrentlyVisibleScreenId,
   showOverlay,
-  removeOverlay
+  removeOverlay,
   getCurrentlyVisibleScreenId,
   getLaunchArgs
 };

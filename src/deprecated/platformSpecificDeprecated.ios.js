@@ -764,7 +764,7 @@ export default {
   dismissContextualMenu,
   getCurrentlyVisibleScreenId,
   showOverlay,
-  removeOverlay
+  removeOverlay,
   getCurrentlyVisibleScreenId,
   getLaunchArgs
 };
