@@ -91,7 +91,6 @@
   UIColor *selectedButtonColor = nil;
   UIColor *labelColor = nil;
   UIColor *selectedLabelColor = nil;
-  NSDictionary *passProps = props[@"passProps"];
   NSDictionary *tabsStyle = props[@"style"];
   if (tabsStyle)
   {
@@ -144,14 +143,8 @@
   NSString *overlayScreen = [props valueForKeyPath:@"overlay.screen"];
   if (overlayScreen) {
     // Pass navigation props
-    NSMutableDictionary *mutablePassPropsOverlay = [passProps mutableCopy];
     NSDictionary *overlayProps = [props valueForKeyPath:@"overlay.passProps"];
-    if (overlayProps) {
-      [mutablePassPropsOverlay addEntriesFromDictionary:overlayProps];
-    }
-    
-    NSDictionary *passPropsOverlay = [NSDictionary dictionaryWithDictionary:mutablePassPropsOverlay];
-    self.overlayView = [[RCTRootView alloc] initWithBridge:bridge moduleName:overlayScreen initialProperties:passPropsOverlay];
+    self.overlayView = [[RCTRootView alloc] initWithBridge:bridge moduleName:overlayScreen initialProperties:overlayProps];
   }
   
   NSMutableArray *viewControllers = [NSMutableArray array];
@@ -285,7 +278,7 @@
   [super viewDidLayoutSubviews];
   
   if (_overlayView) {
-    [self.view bringSubviewToFront:_overlayView];
+    [self.view bringSubviewToFront:self.tabBar];
   }
 }
 

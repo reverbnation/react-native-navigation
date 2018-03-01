@@ -53,6 +53,24 @@ async function startTabBasedApp(params) {
     };
   });
 
+  if (params.overlay && params.overlay.screen) {
+    const screenInstanceID = _.uniqueId('screenInstanceID')
+    const navigatorID = controllerID + '_overlay'
+    const {
+        navigatorStyle,
+        navigatorButtons,
+        navigatorEventID
+    } = _mergeScreenSpecificSettings(params.overlay.screen, screenInstanceID, params.overlay);
+    params.overlay.passProps = {
+        ...params.overlay.passProps,
+        navigatorID,
+        screenInstanceID,
+        navigatorStyle,
+        navigatorButtons,
+        navigatorEventID,
+    }
+  }
+
   const Controller = Controllers.createClass({
     render: function() {
       if (!params.drawer || (!params.drawer.left && !params.drawer.right)) {
@@ -688,6 +706,37 @@ function savePassProps(params) {
 }
 
 function showOverlay(params) {
+    if (!params.screen) {
+        console.error('showOverlay(params): params.screen is required');
+        return;
+    }
+
+    const controllerID = _.uniqueId('controllerID');
+    const navigatorID = controllerID + '_overlay';
+    const screenInstanceID = _.uniqueId('screenInstanceID');
+    const {
+        navigatorStyle,
+        navigatorButtons,
+        navigatorEventID
+    } = _mergeScreenSpecificSettings(params.screen, screenInstanceID, params);
+    const passProps = Object.assign({}, params.passProps);
+    passProps.navigatorID = navigatorID;
+    passProps.screenInstanceID = screenInstanceID;
+    passProps.navigatorEventID = navigatorEventID;
+
+    params.navigationParams = {
+        screenInstanceID,
+        navigatorStyle,
+        navigatorButtons,
+        navigatorEventID,
+        navigatorID
+    };
+
+    savePassProps(params);
+    params.passProps = passProps;
+
+  savePassProps(params);
+
   ScreenUtils.showOverlay(params)
 }
 
