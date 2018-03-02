@@ -53,6 +53,24 @@ async function startTabBasedApp(params) {
     };
   });
 
+  if (params.overlay && params.overlay.screen) {
+    const screenInstanceID = _.uniqueId('screenInstanceID')
+    const navigatorID = controllerID + '_overlay'
+    const {
+        navigatorStyle,
+        navigatorButtons,
+        navigatorEventID
+    } = _mergeScreenSpecificSettings(params.overlay.screen, screenInstanceID, params.overlay);
+    params.overlay.passProps = {
+        ...params.overlay.passProps,
+        navigatorID,
+        screenInstanceID,
+        navigatorStyle,
+        navigatorButtons,
+        navigatorEventID,
+    }
+  }
+
   const Controller = Controllers.createClass({
     render: function() {
       if (!params.drawer || (!params.drawer.left && !params.drawer.right)) {
@@ -96,7 +114,8 @@ async function startTabBasedApp(params) {
           id={controllerID + '_tabs'}
           style={params.tabsStyle}
           appStyle={params.appStyle}
-          initialTabIndex={params.initialTabIndex}>
+          initialTabIndex={params.initialTabIndex}
+          overlay={params.overlay}>
           {
             params.tabs.map(function (tab, index) {
               return (
@@ -213,6 +232,7 @@ async function startSingleScreenApp(params) {
           subtitle={params.subtitle}
           titleImage={screen.titleImage}
           component={screen.screen}
+          overlay={params.overlay}
           components={components}
           passProps={passProps}
           style={navigatorStyle}
@@ -685,6 +705,45 @@ function savePassProps(params) {
   }
 }
 
+function showOverlay(params) {
+    if (!params.screen) {
+        console.error('showOverlay(params): params.screen is required');
+        return;
+    }
+
+    const controllerID = _.uniqueId('controllerID');
+    const navigatorID = controllerID + '_overlay';
+    const screenInstanceID = _.uniqueId('screenInstanceID');
+    const {
+        navigatorStyle,
+        navigatorButtons,
+        navigatorEventID
+    } = _mergeScreenSpecificSettings(params.screen, screenInstanceID, params);
+    const passProps = Object.assign({}, params.passProps);
+    passProps.navigatorID = navigatorID;
+    passProps.screenInstanceID = screenInstanceID;
+    passProps.navigatorEventID = navigatorEventID;
+
+    params.navigationParams = {
+        screenInstanceID,
+        navigatorStyle,
+        navigatorButtons,
+        navigatorEventID,
+        navigatorID
+    };
+
+    savePassProps(params);
+    params.passProps = passProps;
+
+  savePassProps(params);
+
+  ScreenUtils.showOverlay(params)
+}
+
+function removeOverlay() {
+  ScreenUtils.removeOverlay()
+}
+
 function showContextualMenu() {
   // Android only
 }
@@ -752,6 +811,9 @@ export default {
   navigatorToggleNavBar,
   showContextualMenu,
   dismissContextualMenu,
+  getCurrentlyVisibleScreenId,
+  showOverlay,
+  removeOverlay,
   getCurrentlyVisibleScreenId,
   getLaunchArgs
 };
