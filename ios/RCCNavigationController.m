@@ -516,6 +516,9 @@ NSString const *CALLBACK_ASSOCIATED_ID = @"RCCNavigationController.CALLBACK_ASSO
     if (iconImage)
     {
       barButtonItem = [[UIBarButtonItem alloc] initWithImage:iconImage style:UIBarButtonItemStylePlain target:self action:@selector(onButtonPress:)];
+      if (title) {
+        barButtonItem.accessibilityLabel = title;
+      }
     }
     else if (title)
     {
