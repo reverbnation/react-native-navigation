@@ -162,7 +162,7 @@ NSString const *CALLBACK_ASSOCIATED_ID = @"RCCNavigationController.CALLBACK_ASSO
     NSMutableDictionary *passProps = [actionParams[@"passProps"] mutableCopy];
     passProps[GLOBAL_SCREEN_ACTION_COMMAND_TYPE] = COMMAND_TYPE_PUSH;
     passProps[GLOBAL_SCREEN_ACTION_TIMESTAMP] = actionParams[GLOBAL_SCREEN_ACTION_TIMESTAMP];
-    NSDictionary *navigatorStyle = actionParams[@"style"];
+    NSDictionary *navigatorStyle = actionParams[@"style"] ? actionParams[@"style"] : actionParams[@"navigatorStyle"];
     
     NSNumber *keepStyleAcrossPush = [[RCCManager sharedInstance] getAppStyle][@"keepStyleAcrossPush"];
     BOOL keepStyleAcrossPushBool = keepStyleAcrossPush ? [keepStyleAcrossPush boolValue] : YES;
@@ -350,6 +350,11 @@ NSString const *CALLBACK_ASSOCIATED_ID = @"RCCNavigationController.CALLBACK_ASSO
                                                               rightButtons:rightButtons
                                                                     bridge:bridge];
 
+      NSDictionary *navigatorStyle = actionParams[@"style"];
+      [self processTitleView:viewController
+                       props:actionParams
+                       style:navigatorStyle];
+
       viewControllers = @[viewController];
     } else if (componentConfigs) {
       NSMutableArray *mutableViewControllers = [NSMutableArray arrayWithCapacity:[componentConfigs count]];
@@ -368,6 +373,10 @@ NSString const *CALLBACK_ASSOCIATED_ID = @"RCCNavigationController.CALLBACK_ASSO
                                                                  leftButtons:leftButtons
                                                                 rightButtons:rightButtons
                                                                       bridge:bridge];
+
+        [self processTitleView:viewController
+                         props:actionParams
+                         style:style];
 
         [mutableViewControllers addObject:viewController];
       }];
