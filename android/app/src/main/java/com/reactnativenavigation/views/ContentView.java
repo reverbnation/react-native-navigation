@@ -2,9 +2,11 @@ package com.reactnativenavigation.views;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.facebook.react.ReactRootView;
+import com.facebook.react.uimanager.TouchTargetHelper;
 import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.params.NavigationParams;
 import com.reactnativenavigation.screens.SingleScreen;
@@ -79,6 +81,14 @@ public class ContentView extends ReactRootView {
     public void onViewAdded(final View child) {
         super.onViewAdded(child);
         detectContentViewVisible(child);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        super.onTouchEvent(ev);
+
+        int tag = TouchTargetHelper.findTargetTagForTouch(ev.getX(), ev.getY(), this);
+        return tag != this.getId();
     }
 
     private void detectContentViewVisible(View child) {
