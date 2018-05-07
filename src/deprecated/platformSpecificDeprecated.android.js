@@ -344,6 +344,10 @@ async function startTabBasedApp(params) {
   });
   params.tabs = newTabs;
 
+  if (params.overlay) {
+    params.overlay = createOverlay(params.overlay)
+  }
+
   params.appStyle = convertStyleParams(params.appStyle);
   if (params.appStyle) {
     params.appStyle.orientation = getOrientation(params);
@@ -871,6 +875,5 @@ export default {
   getCurrentlyVisibleScreenId,
   showOverlay,
   removeOverlay,
-  getCurrentlyVisibleScreenId,
   getLaunchArgs
 };

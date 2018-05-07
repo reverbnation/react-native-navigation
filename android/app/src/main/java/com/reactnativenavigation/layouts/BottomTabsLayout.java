@@ -36,6 +36,7 @@ import com.reactnativenavigation.screens.ScreenStack;
 import com.reactnativenavigation.utils.Task;
 import com.reactnativenavigation.utils.ViewUtils;
 import com.reactnativenavigation.views.BottomTabs;
+import com.reactnativenavigation.views.ContentOverlayView;
 import com.reactnativenavigation.views.LightBox;
 import com.reactnativenavigation.views.SideMenu;
 import com.reactnativenavigation.views.SideMenu.Side;
@@ -57,6 +58,8 @@ public class BottomTabsLayout extends BaseLayout implements AHBottomNavigation.O
     private ScreenStack[] screenStacks;
     private final SideMenuParams leftSideMenuParams;
     private final SideMenuParams rightSideMenuParams;
+    protected final ScreenParams overlayParams;
+    private ContentOverlayView overlayView;
     private final SlidingOverlaysQueue slidingOverlaysQueue = new SlidingOverlaysQueue();
     private
     @Nullable
@@ -69,6 +72,7 @@ public class BottomTabsLayout extends BaseLayout implements AHBottomNavigation.O
         this.params = params;
         leftSideMenuParams = params.leftSideMenuParams;
         rightSideMenuParams = params.rightSideMenuParams;
+        overlayParams = params.overlayParams;
         screenStacks = new ScreenStack[params.tabParams.size()];
         createLayout();
     }
@@ -78,6 +82,7 @@ public class BottomTabsLayout extends BaseLayout implements AHBottomNavigation.O
         createBottomTabs();
         addBottomTabs();
         addScreenStacks();
+        createOverlay();
         createSnackbarContainer();
         showInitialScreenStack();
         setInitialTabIndex();
@@ -142,6 +147,14 @@ public class BottomTabsLayout extends BaseLayout implements AHBottomNavigation.O
         alignSnackbarContainerWithBottomTabs(lp, getCurrentScreen().getStyleParams());
         snackbarAndFabContainer.setClickable(false);
         getScreenStackParent().addView(snackbarAndFabContainer, lp);
+    }
+
+    private void createOverlay() {
+        if (overlayParams != null) {
+            overlayView = new ContentOverlayView(getActivity(), overlayParams.screenId, overlayParams.navigationParams);
+            LayoutParams overlayViewLayoutParams = new LayoutParams(MATCH_PARENT, MATCH_PARENT);
+            getScreenStackParent().addView(overlayView, overlayViewLayoutParams);
+        }
     }
 
     private void showInitialScreenStack() {
