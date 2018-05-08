@@ -81,8 +81,8 @@ public class BottomTabsLayout extends BaseLayout implements AHBottomNavigation.O
         createSideMenu();
         createBottomTabs();
         addBottomTabs();
-        addScreenStacks();
         createOverlay();
+        addScreenStacks();
         createSnackbarContainer();
         showInitialScreenStack();
         setInitialTabIndex();
