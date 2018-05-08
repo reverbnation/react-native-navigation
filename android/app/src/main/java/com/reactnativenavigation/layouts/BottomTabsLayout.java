@@ -60,6 +60,7 @@ public class BottomTabsLayout extends BaseLayout implements AHBottomNavigation.O
     private final SideMenuParams rightSideMenuParams;
     protected final ScreenParams overlayParams;
     private ContentOverlayView overlayView;
+    private View overlayPlaceholder;
     private final SlidingOverlaysQueue slidingOverlaysQueue = new SlidingOverlaysQueue();
     private
     @Nullable
@@ -82,8 +83,8 @@ public class BottomTabsLayout extends BaseLayout implements AHBottomNavigation.O
         createBottomTabs();
         addBottomTabs();
         addScreenStacks();
-        createOverlay();
         createSnackbarContainer();
+        createOverlay();
         showInitialScreenStack();
         setInitialTabIndex();
     }
@@ -154,6 +155,10 @@ public class BottomTabsLayout extends BaseLayout implements AHBottomNavigation.O
             overlayView = new ContentOverlayView(getActivity(), overlayParams.screenId, overlayParams.navigationParams);
             LayoutParams overlayViewLayoutParams = new LayoutParams(MATCH_PARENT, MATCH_PARENT);
             getScreenStackParent().addView(overlayView, overlayViewLayoutParams);
+        } else {
+            overlayPlaceholder = new View(getContext());
+            LayoutParams overlayViewLayoutParams = new LayoutParams(MATCH_PARENT, MATCH_PARENT);
+            getScreenStackParent().addView(overlayPlaceholder, overlayViewLayoutParams);
         }
     }
 
